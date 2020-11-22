@@ -13,7 +13,6 @@ class MenuPage extends StatefulWidget {
 }
 
 class _MenuPageState extends State<MenuPage> {
-  final memo = Product.getProducts();
   @override
   Widget build(BuildContext context) {
     Container(
@@ -26,9 +25,6 @@ class _MenuPageState extends State<MenuPage> {
       ),
     );
     return Scaffold(
-      floatingActionButton: FloatingActionButton(onPressed: () {
-        setState(() {});
-      }),
       body: Stack(
         overflow: Overflow.visible,
         children: [
@@ -82,26 +78,6 @@ class _MenuPageState extends State<MenuPage> {
                 ],
               ),
             ),
-          ),
-          ListView.builder(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            itemCount: memo.length,
-            itemBuilder: (BuildContext context, index) {
-              return GestureDetector(
-                child: MemoBox(
-                  memo: memo[index],
-                ),
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (BuildContext context) => EditMemo(
-                                memo: memo[index],
-                              )));
-                },
-              );
-            },
           ),
         ],
       ),
@@ -157,7 +133,9 @@ class _MenuPageState extends State<MenuPage> {
 
   Container menuhero(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(top: MediaQuery.of(context).size.height / 5),
+      margin: EdgeInsets.only(
+          top: MediaQuery.of(context).size.height / 5,
+          left: MediaQuery.of(context).size.width / 11.6),
       padding: EdgeInsets.only(top: MediaQuery.of(context).size.height / 25),
       height: MediaQuery.of(context).size.height / 3,
       width: MediaQuery.of(context).size.width / 1.2,

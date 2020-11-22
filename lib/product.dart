@@ -57,15 +57,16 @@ class Product {
     };
   }
 
-  static List<Product> getProducts() {
+  static List<Product> getProducts(
+      int jenis, Product category, Product title, Product tanggal, int amount) {
     List<Product> items = <Product>[];
 
     items.add(Product(
-        jenisCashFlow: 1,
-        category: "llll",
-        title: "aaa",
+        jenisCashFlow: jenis,
+        category: category.toString(),
+        title: title.toString(),
         tanggal: DateTime.now(),
-        amount: 11111));
+        amount: amount));
 
     return items;
   }
