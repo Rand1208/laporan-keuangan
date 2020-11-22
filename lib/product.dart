@@ -62,7 +62,7 @@ class Product {
 
     items.add(Product(
         jenisCashFlow: 1,
-        category: "aaa",
+        category: "llll",
         title: "aaa",
         tanggal: DateTime.now(),
         amount: 11111));
