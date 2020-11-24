@@ -58,13 +58,13 @@ class Product {
   }
 
   static List<Product> getProducts(
-      int jenis, Product category, Product title, Product tanggal, int amount) {
+      int jenis, String category, String title, Date tanggal, int amount) {
     List<Product> items = <Product>[];
 
     items.add(Product(
         jenisCashFlow: jenis,
-        category: category.toString(),
-        title: title.toString(),
+        category: category,
+        title: title,
         tanggal: DateTime.now(),
         amount: amount));
 
