@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:laporankeuangan/Services/memoServices.dart';
+
 import 'package:laporankeuangan/product.dart';
 
 class PageAddMemo extends StatefulWidget {
@@ -15,11 +15,22 @@ class _PageAddMemoState extends State<PageAddMemo> {
   var titlecont = TextEditingController();
   var datecont = TextEditingController();
   var amountcont = TextEditingController();
+  var jenis = 0;
+  DateTime selectedDate = DateTime.now();
 
-  var memo = Product();
-  var memoServices = MemoServices();
+  Color colora = Colors.amber;
+  Color colorb = Colors.amber;
 
-  Color colora = Colors.blue;
+  Future<DateTime> _selectDate(BuildContext context) async {
+    final DateTime picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDate, // Refer step 1
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2025),
+    );
+
+    return selectedDate = picked;
+  }
 
   void dispose() {
     titlecont.dispose();
@@ -30,7 +41,7 @@ class _PageAddMemoState extends State<PageAddMemo> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () async {},
         child: Icon(Icons.add),
       ),
       body: Container(
@@ -46,13 +57,10 @@ class _PageAddMemoState extends State<PageAddMemo> {
                   children: [
                     FlatButton(
                       onPressed: () {
-                        if (colora == Colors.blue) {
-                          colora = Colors.amber;
-                          setState(() {});
-                        } else {
-                          colora = Colors.blue;
-                          setState(() {});
-                        }
+                        jenis = 1;
+                        colora = Colors.amber;
+                        colorb = Colors.blue;
+                        setState(() {});
                       },
                       child: Container(
                         height: MediaQuery.of(context).size.height / 18,
@@ -64,7 +72,7 @@ class _PageAddMemoState extends State<PageAddMemo> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              "aa",
+                              "Pengeluaran",
                               style: TextStyle(
                                 fontStyle: FontStyle.normal,
                                 fontFamily: 'Allerta',
@@ -78,19 +86,16 @@ class _PageAddMemoState extends State<PageAddMemo> {
                     ),
                     FlatButton(
                       onPressed: () {
-                        if (colora == Colors.blue) {
-                          colora = Colors.amber;
-                          setState(() {});
-                        } else {
-                          colora = Colors.blue;
-                          setState(() {});
-                        }
+                        jenis = 2;
+                        colorb = Colors.amber;
+                        colora = Colors.blue;
+                        setState(() {});
                       },
                       child: Container(
                         height: MediaQuery.of(context).size.height / 18,
                         width: MediaQuery.of(context).size.width / 3,
                         decoration: BoxDecoration(
-                            color: Colors.blue[50],
+                            color: colorb,
                             borderRadius: BorderRadius.circular(20)),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -129,32 +134,38 @@ class _PageAddMemoState extends State<PageAddMemo> {
               ),
               Container(
                 padding: EdgeInsets.only(
-                    left: MediaQuery.of(context).size.width / 8,
-                    right: MediaQuery.of(context).size.width / 8,
+                    left: MediaQuery.of(context).size.width / 7,
+                    right: MediaQuery.of(context).size.width / 5,
                     top: MediaQuery.of(context).size.height / 50),
                 height: MediaQuery.of(context).size.height / 4,
                 child: Column(
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        bottomCategory(context),
-                        bottomCategory(context),
-                        bottomCategory(context),
-                        bottomCategory(context),
-                      ],
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          bottomCategory(context),
+                          bottomCategory(context),
+                          bottomCategory(context),
+                          bottomCategory(context),
+                        ],
+                      ),
                     ),
                     SizedBox(
                       height: MediaQuery.of(context).size.height / 30,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        bottomCategory(context),
-                        bottomCategory(context),
-                        bottomCategory(context),
-                        bottomCategory(context),
-                      ],
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          bottomCategory(context),
+                          bottomCategory(context),
+                          bottomCategory(context),
+                          bottomCategory(context),
+                        ],
+                      ),
                     )
                   ],
                 ),
@@ -197,7 +208,7 @@ class _PageAddMemoState extends State<PageAddMemo> {
                           prefixIcon: Icon(
                             Icons.date_range,
                           ),
-                          labelText: selectedDate.toString(),
+                          labelText: "Tanggal",
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(20),
                               borderSide: BorderSide(color: Colors.black12)),
@@ -205,19 +216,10 @@ class _PageAddMemoState extends State<PageAddMemo> {
                       ),
                     ),
                     FlatButton(
-                        onPressed: () {
-                          setState(() {
-                            _selectDate(context);
-                          });
-
-                          memo.title = titlecont.text;
-                          memo.tanggal = selectedDate;
-                          memo.amount = 10000;
-
-                          memoServices.addmemo(memo);
-                          memoServices
-                              .addListMemo(Product(title: titlecont.text));
-                          setState(() {});
+                        onPressed: () async {
+                          DateTime selectedDatee = await _selectDate(context);
+                          print("tanggal masuk");
+                          print(selectedDatee.toString());
                         },
                         child: Icon(Icons.date_range))
                   ],
@@ -253,6 +255,22 @@ class _PageAddMemoState extends State<PageAddMemo> {
                   ],
                 ),
               ),
+              RaisedButton(
+                  child: Text("Push"),
+                  onPressed: () async {
+                    List<Product> item = await Product.getProducts(
+                        1,
+                        "category",
+                        titlecont.text,
+                        selectedDate,
+                        int.parse(amountcont.text));
+
+                    print(item.length);
+                    print(item[0].tanggal);
+                    setState(() {});
+                  }),
+              Text(selectedDate.toString()),
+              Text("adada"),
             ],
           ),
         ),
@@ -260,29 +278,20 @@ class _PageAddMemoState extends State<PageAddMemo> {
     );
   }
 
-  Container bottomCategory(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(5),
-      width: MediaQuery.of(context).size.width / 7,
-      height: MediaQuery.of(context).size.height / 14,
-      decoration: BoxDecoration(
-          color: Colors.amberAccent, borderRadius: BorderRadius.circular(10)),
-      child: Image(
-        image: AssetImage('lib/images/money-bag.png'),
-        height: MediaQuery.of(context).size.height / 10,
+  bottomCategory(BuildContext context) {
+    return FlatButton(
+      onPressed: () {},
+      child: Container(
+        padding: EdgeInsets.all(5),
+        width: MediaQuery.of(context).size.width / 7,
+        height: MediaQuery.of(context).size.height / 14,
+        decoration: BoxDecoration(
+            color: Colors.amberAccent, borderRadius: BorderRadius.circular(10)),
+        child: Image(
+          image: AssetImage('lib/images/money-bag.png'),
+          height: MediaQuery.of(context).size.height / 10,
+        ),
       ),
     );
   }
-}
-
-DateTime selectedDate = DateTime.now();
-_selectDate(BuildContext context) async {
-  final DateTime picked = await showDatePicker(
-    context: context,
-    initialDate: selectedDate, // Refer step 1
-    firstDate: DateTime(2000),
-    lastDate: DateTime(2025),
-  );
-
-  selectedDate = picked;
 }

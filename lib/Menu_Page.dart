@@ -1,11 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
-import 'package:laporankeuangan/Services/memoServices.dart';
+
 import 'package:laporankeuangan/addmemo.dart';
-import 'package:laporankeuangan/editMemo.dart';
+
 import 'package:laporankeuangan/memoBox.dart';
-import 'package:laporankeuangan/product.dart';
 
 class MenuPage extends StatefulWidget {
   @override

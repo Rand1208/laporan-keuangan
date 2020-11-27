@@ -1,8 +1,3 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
-import 'package:laporankeuangan/Menu_Page.dart';
-import 'package:laporankeuangan/addmemo.dart';
-
 class Product {
   int jenisCashFlow = 1;
 
@@ -41,11 +36,7 @@ class Product {
   // }
 
   Product(
-      {this.jenisCashFlow,
-      this.category,
-      this.title,
-      this.tanggal,
-      this.amount});
+      this.jenisCashFlow, this.category, this.title, this.tanggal, this.amount);
 
   Map<String, dynamic> toMap() {
     return {
@@ -57,16 +48,11 @@ class Product {
     };
   }
 
-  static List<Product> getProducts(
-      int jenis, Product category, Product title, Product tanggal, int amount) {
+  static Future<List<Product>> getProducts(int jenis, String category,
+      String title, DateTime tanggal, int amount) async {
     List<Product> items = <Product>[];
-
-    items.add(Product(
-        jenisCashFlow: jenis,
-        category: category.toString(),
-        title: title.toString(),
-        tanggal: DateTime.now(),
-        amount: amount));
+    items.add(Product(jenis, category, title, DateTime.now(), amount));
+    items.length > 2 ? print("list berhasil ") : print("list gagal");
 
     return items;
   }
