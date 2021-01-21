@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import 'package:laporankeuangan/product.dart';
@@ -5,7 +6,9 @@ import 'package:laporankeuangan/product.dart';
 class PageAddMemo extends StatefulWidget {
   const PageAddMemo({
     Key key,
+    this.uid,
   }) : super(key: key);
+  final String uid;
 
   @override
   _PageAddMemoState createState() => _PageAddMemoState();
@@ -20,6 +23,8 @@ class _PageAddMemoState extends State<PageAddMemo> {
 
   Color colora = Colors.amber;
   Color colorb = Colors.amber;
+  String image = "";
+  int cat = 1;
 
   Future<DateTime> _selectDate(BuildContext context) async {
     final DateTime picked = await showDatePicker(
@@ -41,7 +46,16 @@ class _PageAddMemoState extends State<PageAddMemo> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () async {},
+        onPressed: () async {
+          Product.addmemo(
+              uid: widget.uid,
+              jcash: jenis,
+              category: image,
+              title: titlecont.text,
+              tanggalTransaksi: selectedDate.toString(),
+              tanggalSimpan: DateTime.now().toString().trim(),
+              amount: int.parse(amountcont.text));
+        },
         child: Icon(Icons.add),
       ),
       body: Container(
@@ -145,10 +159,74 @@ class _PageAddMemoState extends State<PageAddMemo> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          bottomCategory(context),
-                          bottomCategory(context),
-                          bottomCategory(context),
-                          bottomCategory(context),
+                          FlatButton(
+                            onPressed: () {
+                              image = "lib/images/money-bag.png";
+                            },
+                            child: Container(
+                              padding: EdgeInsets.all(5),
+                              width: MediaQuery.of(context).size.width / 7,
+                              height: MediaQuery.of(context).size.height / 14,
+                              decoration: BoxDecoration(
+                                  color: Colors.amberAccent,
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Image(
+                                image: AssetImage('lib/images/money-bag.png'),
+                                height: MediaQuery.of(context).size.height / 10,
+                              ),
+                            ),
+                          ),
+                          FlatButton(
+                            onPressed: () {
+                              image = "lib/images/calender.png";
+                            },
+                            child: Container(
+                              padding: EdgeInsets.all(5),
+                              width: MediaQuery.of(context).size.width / 7,
+                              height: MediaQuery.of(context).size.height / 14,
+                              decoration: BoxDecoration(
+                                  color: Colors.amberAccent,
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Image(
+                                image: AssetImage('lib/images/money-bag.png'),
+                                height: MediaQuery.of(context).size.height / 10,
+                              ),
+                            ),
+                          ),
+                          FlatButton(
+                            onPressed: () {
+                              image = "lib/images/user.png";
+                            },
+                            child: Container(
+                              padding: EdgeInsets.all(5),
+                              width: MediaQuery.of(context).size.width / 7,
+                              height: MediaQuery.of(context).size.height / 14,
+                              decoration: BoxDecoration(
+                                  color: Colors.amberAccent,
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Image(
+                                image: AssetImage('lib/images/money-bag.png'),
+                                height: MediaQuery.of(context).size.height / 10,
+                              ),
+                            ),
+                          ),
+                          FlatButton(
+                            onPressed: () {
+                              image = "lib/images/plus.png";
+                            },
+                            child: Container(
+                              padding: EdgeInsets.all(5),
+                              width: MediaQuery.of(context).size.width / 7,
+                              height: MediaQuery.of(context).size.height / 14,
+                              decoration: BoxDecoration(
+                                  color: Colors.amberAccent,
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Image(
+                                image: AssetImage('lib/images/money-bag.png'),
+                                height: MediaQuery.of(context).size.height / 10,
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -160,10 +238,74 @@ class _PageAddMemoState extends State<PageAddMemo> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          bottomCategory(context),
-                          bottomCategory(context),
-                          bottomCategory(context),
-                          bottomCategory(context),
+                          FlatButton(
+                            onPressed: () {
+                              image = "lib/images/money-bag.png";
+                            },
+                            child: Container(
+                              padding: EdgeInsets.all(5),
+                              width: MediaQuery.of(context).size.width / 7,
+                              height: MediaQuery.of(context).size.height / 14,
+                              decoration: BoxDecoration(
+                                  color: Colors.amberAccent,
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Image(
+                                image: AssetImage('lib/images/money-bag.png'),
+                                height: MediaQuery.of(context).size.height / 10,
+                              ),
+                            ),
+                          ),
+                          FlatButton(
+                            onPressed: () {
+                              image = "lib/images/calendar.png";
+                            },
+                            child: Container(
+                              padding: EdgeInsets.all(5),
+                              width: MediaQuery.of(context).size.width / 7,
+                              height: MediaQuery.of(context).size.height / 14,
+                              decoration: BoxDecoration(
+                                  color: Colors.amberAccent,
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Image(
+                                image: AssetImage('lib/images/money-bag.png'),
+                                height: MediaQuery.of(context).size.height / 10,
+                              ),
+                            ),
+                          ),
+                          FlatButton(
+                            onPressed: () {
+                              image = "lib/images/user.png";
+                            },
+                            child: Container(
+                              padding: EdgeInsets.all(5),
+                              width: MediaQuery.of(context).size.width / 7,
+                              height: MediaQuery.of(context).size.height / 14,
+                              decoration: BoxDecoration(
+                                  color: Colors.amberAccent,
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Image(
+                                image: AssetImage('lib/images/money-bag.png'),
+                                height: MediaQuery.of(context).size.height / 10,
+                              ),
+                            ),
+                          ),
+                          FlatButton(
+                            onPressed: () {
+                              image = "lib/images/plus.png";
+                            },
+                            child: Container(
+                              padding: EdgeInsets.all(5),
+                              width: MediaQuery.of(context).size.width / 7,
+                              height: MediaQuery.of(context).size.height / 14,
+                              decoration: BoxDecoration(
+                                  color: Colors.amberAccent,
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Image(
+                                image: AssetImage('lib/images/money-bag.png'),
+                                height: MediaQuery.of(context).size.height / 10,
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     )
@@ -255,22 +397,15 @@ class _PageAddMemoState extends State<PageAddMemo> {
                   ],
                 ),
               ),
-              RaisedButton(
-                  child: Text("Push"),
-                  onPressed: () async {
-                    List<Product> item = await Product.getProducts(
-                        1,
-                        "category",
-                        titlecont.text,
-                        selectedDate,
-                        int.parse(amountcont.text));
-
-                    print(item.length);
-                    print(item[0].tanggal);
-                    setState(() {});
-                  }),
               Text(selectedDate.toString()),
               Text("adada"),
+              RaisedButton(
+                child: Text("get data"),
+                onPressed: () async {
+                  QuerySnapshot data = await Product.getdata(widget.uid);
+                  print(data.docs[0].data());
+                },
+              )
             ],
           ),
         ),
@@ -280,7 +415,11 @@ class _PageAddMemoState extends State<PageAddMemo> {
 
   bottomCategory(BuildContext context) {
     return FlatButton(
-      onPressed: () {},
+      onPressed: () {
+        if (image == "1") {
+        } else {}
+        image = "lib/images/bitcoin.png";
+      },
       child: Container(
         padding: EdgeInsets.all(5),
         width: MediaQuery.of(context).size.width / 7,

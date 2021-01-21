@@ -1,17 +1,41 @@
-class User {
-  final String id;
-  final String name;
-  final String email;
-  final String password;
-  final String jumlahUang;
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-  User(this.id, this.name, this.email, this.password, this.jumlahUang);
+class Userss {
+  static CollectionReference users =
+      FirebaseFirestore.instance.collection('users');
 
-  List<User> getUsers() {
-    List<User> users = <User>[];
-    users.add(
-        User(this.id, this.name, this.email, this.password, this.jumlahUang));
+  static Future<void> addUser(
+      {String uid,
+      String username,
+      int balance,
+      String email,
+      String password}) async {
+    return users
+        .doc()
+        .set({
+          'uid': uid,
+          'username': username,
+          'balance': balance,
+          'email': email,
+          'password': password,
+        })
+        .then((value) => print("user added"))
+        .catchError((error) => print("field signup"));
+  }
 
-    return users;
+  static Future<void> editUser(
+      {String uid,
+      String username,
+      int balance,
+      String email,
+      String password}) async {
+    return users.doc().set({
+      'uid': uid,
+      'email': email,
+    });
+  }
+
+  static Future<DocumentSnapshot> getData(String uid) {
+    return users.doc(uid).get();
   }
 }

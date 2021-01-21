@@ -1,28 +1,40 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:laporankeuangan/LoginPage.dart';
 
 import 'package:laporankeuangan/addmemo.dart';
+import 'package:laporankeuangan/auth_services.dart';
 
 import 'package:laporankeuangan/memoBox.dart';
+import 'package:laporankeuangan/product.dart';
 
 class MenuPage extends StatefulWidget {
-  @override
+  MenuPage({this.nama, this.balance, this.uidd});
+  final String nama;
+  final String balance;
+  final String uidd;
   _MenuPageState createState() => _MenuPageState();
 }
 
 class _MenuPageState extends State<MenuPage> {
   @override
   Widget build(BuildContext context) {
-    Container(
-      width: MediaQuery.of(context).size.width / 1.2,
-      alignment: Alignment.bottomLeft,
-      height: MediaQuery.of(context).size.height / 12,
-      child: Text(
-        "Cash flow",
-        style: fontallerta(20),
-      ),
-    );
+    CollectionReference memo = FirebaseFirestore.instance.collection('users');
+
+    StreamBuilder<QuerySnapshot>(
+        stream: memo.snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Text("data gagal diambil");
+          }
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Text("Lagi loading");
+          }
+        });
+
     return Scaffold(
       body: Stack(
         overflow: Overflow.visible,
@@ -41,7 +53,7 @@ class _MenuPageState extends State<MenuPage> {
                     height: 20,
                   ),
                   Text(
-                    "Cash Flow",
+                    widget.nama,
                     style: fontRoboto(20),
                   ),
                 ],
@@ -49,6 +61,55 @@ class _MenuPageState extends State<MenuPage> {
             ),
           ),
           menuAppBar(context),
+          StreamBuilder<QuerySnapshot>(
+              stream: Product.getRealTimeData(widget.uidd),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  return Container(
+                    height: MediaQuery.of(context).size.height / 2,
+                    padding: EdgeInsets.all(30),
+                    margin: EdgeInsets.only(
+                        top: MediaQuery.of(context).size.height / 1.7),
+                    child: ListView.builder(
+                        itemCount: snapshot.data.docs.length,
+                        itemBuilder: (context, i) {
+                          return Card(
+                            child: ListTile(
+                              subtitle:
+                                  Text(snapshot.data.docs[i].get('category')),
+                              trailing:
+                                  Text(snapshot.data.docs[i].get('category')),
+                              title:
+                                  Text(snapshot.data.docs[i].get('titlememo')),
+                            ),
+                          );
+                        }),
+                  );
+                } else if (snapshot.connectionState == ConnectionState.none) {
+                  return Text("Data gagal diambil");
+                }
+                return Container(
+                  height: MediaQuery.of(context).size.height / 2,
+                  padding: EdgeInsets.all(30),
+                  margin: EdgeInsets.only(
+                      bottom: MediaQuery.of(context).size.height / 20,
+                      top: MediaQuery.of(context).size.height / 1.7),
+                  child: ListView.builder(
+                      itemCount: snapshot.data.docs.length,
+                      itemBuilder: (context, i) {
+                        return Card(
+                          child: ListTile(
+                            subtitle: Text(
+                                snapshot.data.docs[i].get('amount').toString()),
+                            trailing: Image(
+                                image: AssetImage(
+                                    snapshot.data.docs[i].get('category'))),
+                            title: Text(snapshot.data.docs[i].get('titlememo')),
+                          ),
+                        );
+                      }),
+                );
+              }),
           Positioned(
             width: MediaQuery.of(context).size.width / 1,
             height: MediaQuery.of(context).size.height / 15,
@@ -68,7 +129,9 @@ class _MenuPageState extends State<MenuPage> {
                               context,
                               MaterialPageRoute(
                                   builder: (BuildContext context) =>
-                                      PageAddMemo()));
+                                      PageAddMemo(
+                                        uid: widget.uidd,
+                                      )));
                         },
                         child: Image(
                           image: AssetImage("lib/images/plus.png"),
@@ -104,7 +167,7 @@ class _MenuPageState extends State<MenuPage> {
                   height: 5,
                 ),
                 Text(
-                  "Eli",
+                  'Randi ',
                   style: TextStyle(
                     fontSize: 12,
                     fontFamily: 'Roboto',
@@ -116,15 +179,22 @@ class _MenuPageState extends State<MenuPage> {
           SizedBox(
             width: MediaQuery.of(context).size.width / 3,
           ),
-          Container(
-            width: MediaQuery.of(context).size.width / 4,
-            height: MediaQuery.of(context).size.height / 15,
-            decoration: BoxDecoration(
-              borderRadius:
-                  BorderRadius.circular(MediaQuery.of(context).size.width / 2),
+          FlatButton(
+            onPressed: () {
+              AuthServices.signout();
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => LoginPage()));
+            },
+            child: Container(
+              width: MediaQuery.of(context).size.width / 4,
+              height: MediaQuery.of(context).size.height / 15,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(
+                    MediaQuery.of(context).size.width / 2),
+              ),
+              child: Image(image: AssetImage('lib/images/user.png')),
             ),
-            child: Image(image: AssetImage('lib/images/user.png')),
-          )
+          ),
         ],
       ),
     );
@@ -149,7 +219,7 @@ class _MenuPageState extends State<MenuPage> {
           SizedBox(
             height: MediaQuery.of(context).size.height / 40,
           ),
-          Text("Rp.120.000.000", style: fontallerta(40)),
+          Text("100.000.000", style: fontallerta(40)),
           SizedBox(
             height: MediaQuery.of(context).size.height / 50,
           ),

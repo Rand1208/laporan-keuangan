@@ -1,42 +1,62 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+
 class Product {
-  int jenisCashFlow = 1;
-
-  //int get jenisCashFlow => jenisCashFlowa;
-  //set jenisCashFlow(int value) {
-  // jenisCashFlowa = value;
-  //  notifyListeners();
-  //}
-
+  int jenisCashFlow;
   String category;
-  //String get category => categorya;
-  //set category(value) {
-  // categorya = value;
-  //  notifyListeners();
-  //}
-
   String title;
-  //String get title => titlea;
-  //set title(value) {
-  // title = value;
-  // notifyListeners();
-  // }
-
   DateTime tanggal;
-  // DateTime get tanggal => tanggala;
-  //set tanggal(value) {
-  //  titlea = value;
-  //  notifyListeners();
-  //}
-
   int amount;
-  //int get amount => amounta;
-  //set amount(int value) {
-  // amounta = value;
-  //  notifyListeners();
-  // }
 
   Product(
       this.jenisCashFlow, this.category, this.title, this.tanggal, this.amount);
+
+  static CollectionReference memo =
+      FirebaseFirestore.instance.collection('memo');
+
+  static Future<void> addmemo(
+      {String uid,
+      int jcash,
+      String category,
+      String title,
+      String tanggalTransaksi,
+      String tanggalSimpan,
+      int amount}) async {
+    return memo
+        .doc()
+        .set({
+          'uid': uid,
+          'jcash': jcash,
+          'category': category,
+          'titlememo': title,
+          'tanggaltransaksi': tanggalTransaksi,
+          'tanggalsimpan': tanggalSimpan,
+          'amount': amount,
+        })
+        .then((value) => print("memoooooooooooo addedd"))
+        .catchError((error) => print("gagal input memo"));
+  }
+
+  static getdata(String uid) async {
+    QuerySnapshot data = await memo.where("uid", isEqualTo: uid).get();
+
+    return data;
+  }
+
+  static Stream<QuerySnapshot> getRealTimeData(String uid) async* {
+    QuerySnapshot data =
+        await FirebaseFirestore.instance.collection('memo').get();
+
+    if (data.docs.isEmpty) {
+      print("Docs masih Kosong");
+    } else {
+      Query query = FirebaseFirestore.instance
+          .collection("memo")
+          .where("uid", isEqualTo: uid);
+
+      yield* query.snapshots(includeMetadataChanges: true);
+    }
+  }
 
   Map<String, dynamic> toMap() {
     return {

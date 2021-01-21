@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -5,12 +6,26 @@ import 'package:hexcolor/hexcolor.dart';
 import 'package:laporankeuangan/Menu_Page.dart';
 import 'package:laporankeuangan/auth_services.dart';
 
+import 'package:laporankeuangan/signUpPage.dart';
+import 'package:laporankeuangan/user.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
+  void alertdialog(String error) {
+    if (error.isEmpty) return;
+
+    AlertDialog alertDialog = AlertDialog(
+      content: Text(error),
+    );
+
+    showDialog(context: context, child: alertDialog);
+  }
+
   TextEditingController email = TextEditingController();
   TextEditingController pass = TextEditingController();
   @override
@@ -104,39 +119,63 @@ class _LoginPageState extends State<LoginPage> {
             SizedBox(
               height: 20,
             ),
-            Container(
-              margin: EdgeInsets.only(left: 150),
-              child: RaisedButton(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20.0)),
-                  child: Text("Log In"),
-                  color: HexColor("#FFE790"),
-                  onPressed: () async {
-                    UserCredential result = await AuthServices.createUser(
-                        email: email.text.trim(), pass: pass.text);
-                    print(result.user.uid);
-                    if (result != null) {
-                      Navigator.pushAndRemoveUntil(
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Container(
+                  child: RaisedButton(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0)),
+                      child: Text("Log In"),
+                      color: HexColor("#FFE790"),
+                      onPressed: () async {
+                        try {
+                          UserCredential result =
+                              await AuthServices.signInWithEmail(
+                                  email.text.trim(), pass.text);
+                          print("auth berjalan");
+                          print(result.user.uid);
+
+                          if (result != null) {
+                            DocumentSnapshot snapshot =
+                                await Userss.getData(result.user.uid);
+                            if (snapshot != null) {
+                              print('snapshot ada');
+                            } else {
+                              print('gak ada');
+                            }
+
+                            Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (BuildContext context) => MenuPage(
+                                          nama: "uidd['username']",
+                                          balance: "uidd['balance'].toString()",
+                                          uidd: result.user.uid,
+                                        )),
+                                (route) => false);
+                          } else {
+                            print("adadaadadadadada;ljda;ljfjkla hlkaflkafn");
+                            alertdialog("Gagal sign in");
+                          }
+                        } on FirebaseAuthException catch (e) {
+                          if (e.code == 'user-note-found') {
+                            print("User tidak ditemukan");
+                          } else if (e.code == 'wrong-password') {
+                            print("Password Salahaa");
+                          }
+                        }
+                      }),
+                ),
+                RaisedButton(
+                    child: Text("Sign Up"),
+                    onPressed: () {
+                      Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (BuildContext context) => MenuPage()),
-                          (route) => false);
-                    } else {
-                      showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                                title: Text("Error"),
-                                content: Text("gagal"),
-                                actions: [
-                                  FlatButton(
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                      child: Text("ok"))
-                                ],
-                              ));
-                    }
-                  }),
+                              builder: (context) => SignUpPage()));
+                    })
+              ],
             ),
             SizedBox(
               height: 20,
