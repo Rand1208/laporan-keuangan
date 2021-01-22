@@ -56,6 +56,8 @@ class _PageAddMemoState extends State<PageAddMemo> {
               tanggalTransaksi: selectedDate.toString(),
               tanggalSimpan: DateTime.now().toString().trim(),
               amount: int.parse(amountcont.text));
+
+          Product.processData(jenis, widget.uid, int.parse(amountcont.text));
         },
         child: Icon(Icons.add),
       ),
@@ -141,6 +143,8 @@ class _PageAddMemoState extends State<PageAddMemo> {
                           left: MediaQuery.of(context).size.width / 7),
                       child: Text(
                         "Category",
+                        style: GoogleFonts.lato(
+                            fontWeight: FontWeight.w800, fontSize: 20),
                         textAlign: TextAlign.left,
                       ),
                     ),
@@ -401,15 +405,13 @@ class _PageAddMemoState extends State<PageAddMemo> {
                   ],
                 ),
               ),
-              Text(selectedDate.toString()),
-              Text("adada"),
-              RaisedButton(
+              /*RaisedButton(
                 child: Text("get data"),
                 onPressed: () async {
                   QuerySnapshot data = await Product.getdata(widget.uid);
                   print(data.docs[0].data());
                 },
-              )
+              )*/
             ],
           ),
         ),

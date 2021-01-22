@@ -154,8 +154,6 @@ class _LoginPageState extends State<LoginPage> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (BuildContext context) => MenuPage(
-                                          nama: "uidd['username']",
-                                          balance: "uidd['balance'].toString()",
                                           uidd: result.user.uid,
                                         )),
                                 (route) => false);

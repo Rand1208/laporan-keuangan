@@ -14,6 +14,9 @@ class Product {
   static CollectionReference memo =
       FirebaseFirestore.instance.collection('memo');
 
+  static CollectionReference users =
+      FirebaseFirestore.instance.collection('users');
+
   static Future<void> addmemo(
       {String uid,
       int jcash,
@@ -41,6 +44,26 @@ class Product {
     QuerySnapshot data = await memo.where("uid", isEqualTo: uid).get();
 
     return data;
+  }
+
+  static processData(int jenispengeluaran, String uid, int amount) async {
+    CollectionReference userss = FirebaseFirestore.instance.collection('users');
+
+    QuerySnapshot balance = await userss.where('uid', isEqualTo: uid).get();
+
+    int uangSekarang = balance.docs[0].get('balance');
+
+    if (jenispengeluaran == 1) {
+      uangSekarang = uangSekarang - amount;
+      print(uangSekarang.toString());
+    } else {
+      uangSekarang = uangSekarang + amount;
+      print(uangSekarang.toString());
+    }
+    print(uangSekarang.toString());
+
+    userss.doc(uid).update({'balance': uangSekarang}).then(
+        (value) => print("berhasil update"));
   }
 
   static Stream<QuerySnapshot> getRealTimeData(String uid) async* {
