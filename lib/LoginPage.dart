@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:laporankeuangan/Menu_Page.dart';
 import 'package:laporankeuangan/auth_services.dart';
@@ -26,8 +27,8 @@ class _LoginPageState extends State<LoginPage> {
     showDialog(context: context, child: alertDialog);
   }
 
-  TextEditingController email = TextEditingController();
-  TextEditingController pass = TextEditingController();
+  TextEditingController email = TextEditingController(text: "");
+  TextEditingController pass = TextEditingController(text: "");
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,36 +53,33 @@ class _LoginPageState extends State<LoginPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              margin: EdgeInsets.only(top: 20, left: 20),
-              width: 150,
+              margin: EdgeInsets.only(top: 30, left: 20),
+              width: MediaQuery.of(context).size.width / 1,
               height: 50,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Sign IN",
-                    style: TextStyle(
-                      fontSize: 36,
-                      fontFamily: 'Allerta',
-                    ),
+                    "Sign In",
+                    style: GoogleFonts.lato(fontSize: 32),
                   ),
                 ],
               ),
             ),
             Container(
-                margin: EdgeInsets.only(bottom: 20, left: 50),
-                height: 300,
-                width: 300,
+                alignment: Alignment.center,
+                height: MediaQuery.of(context).size.height / 3,
+                width: MediaQuery.of(context).size.width / 1,
                 child: Image(image: AssetImage('lib/images/bitcoin.png'))),
             Container(
               margin: EdgeInsets.only(bottom: 30),
-              width: 430,
+              width: MediaQuery.of(context).size.width / 1,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
                     "CATATAN KEUANGAN",
-                    style: TextStyle(fontFamily: 'Allerta', fontSize: 36),
+                    style: GoogleFonts.lato(fontSize: 35),
                   ),
                 ],
               ),
@@ -90,6 +88,7 @@ class _LoginPageState extends State<LoginPage> {
               margin: EdgeInsets.only(left: 50),
               width: 300.0,
               child: TextFormField(
+                style: GoogleFonts.lato(fontWeight: FontWeight.w800),
                 controller: email,
                 decoration: InputDecoration(
                   labelText: "Email",
@@ -106,6 +105,7 @@ class _LoginPageState extends State<LoginPage> {
               margin: EdgeInsets.only(left: 50),
               width: 300.0,
               child: TextFormField(
+                style: GoogleFonts.lato(fontWeight: FontWeight.w800),
                 obscureText: true,
                 controller: pass,
                 decoration: InputDecoration(
@@ -126,13 +126,17 @@ class _LoginPageState extends State<LoginPage> {
                   child: RaisedButton(
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20.0)),
-                      child: Text("Log In"),
+                      child: Text(
+                        "Sign In",
+                        style: GoogleFonts.lato(fontWeight: FontWeight.w800),
+                      ),
                       color: HexColor("#FFE790"),
                       onPressed: () async {
                         try {
                           UserCredential result =
                               await AuthServices.signInWithEmail(
                                   email.text.trim(), pass.text);
+
                           print("auth berjalan");
                           print(result.user.uid);
 
@@ -143,6 +147,7 @@ class _LoginPageState extends State<LoginPage> {
                               print('snapshot ada');
                             } else {
                               print('gak ada');
+                              alertdialog("Gagal sign in");
                             }
 
                             Navigator.pushAndRemoveUntil(
@@ -159,6 +164,8 @@ class _LoginPageState extends State<LoginPage> {
                             alertdialog("Gagal sign in");
                           }
                         } on FirebaseAuthException catch (e) {
+                          alertdialog("Gagal sign in");
+
                           if (e.code == 'user-note-found') {
                             print("User tidak ditemukan");
                           } else if (e.code == 'wrong-password') {
@@ -168,7 +175,12 @@ class _LoginPageState extends State<LoginPage> {
                       }),
                 ),
                 RaisedButton(
-                    child: Text("Sign Up"),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20)),
+                    child: Text(
+                      "Sign Up",
+                      style: GoogleFonts.lato(fontWeight: FontWeight.w800),
+                    ),
                     onPressed: () {
                       Navigator.push(
                           context,

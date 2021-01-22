@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'package:laporankeuangan/product.dart';
 
@@ -319,6 +320,7 @@ class _PageAddMemoState extends State<PageAddMemo> {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: TextField(
+                  style: GoogleFonts.lato(fontWeight: FontWeight.w800),
                   controller: titlecont,
                   decoration: InputDecoration(
                     prefixIcon: Icon(
@@ -344,6 +346,7 @@ class _PageAddMemoState extends State<PageAddMemo> {
                   children: [
                     Expanded(
                       child: TextField(
+                        style: GoogleFonts.lato(fontWeight: FontWeight.w800),
                         controller: datecont,
                         decoration: InputDecoration(
                           hintText: selectedDate.toString(),
@@ -382,6 +385,7 @@ class _PageAddMemoState extends State<PageAddMemo> {
                     Expanded(
                       child: Container(
                         child: TextField(
+                          style: GoogleFonts.lato(fontWeight: FontWeight.w800),
                           controller: amountcont,
                           decoration: InputDecoration(
                             prefixIcon: Icon(Icons.monetization_on),

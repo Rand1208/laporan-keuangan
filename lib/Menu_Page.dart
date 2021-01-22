@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:laporankeuangan/LoginPage.dart';
 
@@ -28,10 +29,15 @@ class _MenuPageState extends State<MenuPage> {
         stream: memo.snapshots(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            return Text("data gagal diambil");
+            print("Gagal Masuk Menu Page");
+            return CircularProgressIndicator();
           }
           if (snapshot.connectionState == ConnectionState.waiting) {
+            print("Gagal Masuk Menu Page");
             return Text("Lagi loading");
+          } else {
+            print("gaktau kenapa");
+            return CircularProgressIndicator();
           }
         });
 
@@ -86,7 +92,8 @@ class _MenuPageState extends State<MenuPage> {
                         }),
                   );
                 } else if (snapshot.connectionState == ConnectionState.none) {
-                  return Text("Data gagal diambil");
+                  print('gagal Load');
+                  return CircularProgressIndicator();
                 }
                 return Container(
                   height: MediaQuery.of(context).size.height / 2,
@@ -100,11 +107,15 @@ class _MenuPageState extends State<MenuPage> {
                         return Card(
                           child: ListTile(
                             subtitle: Text(
-                                snapshot.data.docs[i].get('amount').toString()),
+                                snapshot.data.docs[i].get('amount').toString(),
+                                style: GoogleFonts.lato(
+                                    fontWeight: FontWeight.w800)),
                             trailing: Image(
                                 image: AssetImage(
                                     snapshot.data.docs[i].get('category'))),
-                            title: Text(snapshot.data.docs[i].get('titlememo')),
+                            title: Text(snapshot.data.docs[i].get('titlememo'),
+                                style: GoogleFonts.lato(
+                                    fontWeight: FontWeight.w800)),
                           ),
                         );
                       }),

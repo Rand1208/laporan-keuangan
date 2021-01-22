@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:laporankeuangan/LoginPage.dart';
 import 'package:laporankeuangan/auth_services.dart';
@@ -13,6 +14,23 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
+  void alertdialog(String error) {
+    if (error.isEmpty) return;
+
+    AlertDialog alertDialog = AlertDialog(
+      title: Text(
+        "Info :",
+        style: GoogleFonts.lato(fontWeight: FontWeight.w800),
+      ),
+      content: Text(
+        error,
+        style: GoogleFonts.lato(fontWeight: FontWeight.w800),
+      ),
+    );
+
+    showDialog(context: context, child: alertDialog);
+  }
+
   TextEditingController emailcont = TextEditingController();
   TextEditingController passcont = TextEditingController();
   TextEditingController namecont = TextEditingController();
@@ -43,12 +61,14 @@ class _SignUpPageState extends State<SignUpPage> {
                   width: 100,
                 ),
                 TextFormField(
+                  style: GoogleFonts.lato(fontWeight: FontWeight.w800),
                   controller: emailcont,
                   decoration: InputDecoration(
                       hintText: "Email", icon: Icon(Icons.email)),
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height / 40),
                 TextFormField(
+                  style: GoogleFonts.lato(fontWeight: FontWeight.w800),
                   obscureText: true,
                   controller: passcont,
                   decoration: InputDecoration(
@@ -56,24 +76,31 @@ class _SignUpPageState extends State<SignUpPage> {
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height / 40),
                 TextFormField(
+                  style: GoogleFonts.lato(fontWeight: FontWeight.w800),
                   controller: namecont,
                   decoration: InputDecoration(
                       hintText: "Username", icon: Icon(Icons.person)),
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height / 40),
                 TextFormField(
+                  style: GoogleFonts.lato(fontWeight: FontWeight.w800),
                   controller: balancecont,
                   decoration: InputDecoration(
                       hintText: "Amount", icon: Icon(Icons.attach_money)),
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height / 30),
                 RaisedButton(
-                    color: Colors.amber[50],
-                    child: Text("sign Up"),
+                    color: Colors.amber[200],
+                    child: Text(
+                      "Sign Up",
+                      style: GoogleFonts.lato(
+                          fontWeight: FontWeight.w800, fontSize: 20),
+                    ),
                     onPressed: () async {
                       try {
                         UserCredential result = await AuthServices.createUser(
-                            email: emailcont.text.trim(), pass: passcont.text);
+                            email: emailcont.text.trim(),
+                            pass: passcont.text.trim());
 
                         Userss.addUser(
                           email: emailcont.text,
@@ -82,7 +109,9 @@ class _SignUpPageState extends State<SignUpPage> {
                           username: namecont.text,
                           balance: int.parse(balancecont.text),
                         );
+                        print(result);
                         if (result != null) {
+                          alertdialog("Sign Up Berhasil");
                           Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
@@ -92,12 +121,9 @@ class _SignUpPageState extends State<SignUpPage> {
                         } else {
                           print("gagal signup");
                         }
-                      } catch (e) {}
-                      Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                              builder: (BuildContext context) => LoginPage()),
-                          (route) => false);
+                      } catch (e) {
+                        alertdialog("Sign Up Gagal");
+                      }
                     })
               ],
             ),

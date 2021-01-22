@@ -16,6 +16,7 @@ class MyApp extends StatelessWidget {
           print("gagal Masuk tau kenapa");
         }
         if (snapshot.connectionState == ConnectionState.done) {
+          print("Berhasil Masuk gan");
           return MaterialApp(
             home: LoginPage(),
           );
