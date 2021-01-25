@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hexcolor/hexcolor.dart';
 import 'package:laporankeuangan/LoginPage.dart';
 import 'package:laporankeuangan/auth_services.dart';
 import 'package:laporankeuangan/user.dart';
@@ -89,42 +88,48 @@ class _SignUpPageState extends State<SignUpPage> {
                       hintText: "Amount", icon: Icon(Icons.attach_money)),
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height / 30),
-                RaisedButton(
-                    color: Colors.amber[200],
-                    child: Text(
-                      "Sign Up",
-                      style: GoogleFonts.lato(
-                          fontWeight: FontWeight.w800, fontSize: 20),
-                    ),
-                    onPressed: () async {
-                      try {
-                        UserCredential result = await AuthServices.createUser(
-                            email: emailcont.text.trim(),
-                            pass: passcont.text.trim());
+                Container(
+                  width: MediaQuery.of(context).size.width / 1.5,
+                  child: RaisedButton(
+                      color: Colors.amber[200],
+                      elevation: 10,
+                      child: Text(
+                        "Sign Up",
+                        style: GoogleFonts.lato(
+                            fontWeight: FontWeight.w800,
+                            fontSize: 20,
+                            textStyle: TextStyle()),
+                      ),
+                      onPressed: () async {
+                        try {
+                          UserCredential result = await AuthServices.createUser(
+                              email: emailcont.text.trim(),
+                              pass: passcont.text.trim());
 
-                        Userss.addUser(
-                          email: emailcont.text,
-                          password: passcont.text,
-                          uid: result.user.uid,
-                          username: namecont.text,
-                          balance: int.parse(balancecont.text),
-                        );
-                        print(result);
-                        if (result != null) {
-                          alertdialog("Sign Up Berhasil");
-                          Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                      LoginPage()),
-                              (route) => false);
-                        } else {
-                          print("gagal signup");
+                          Userss.addUser(
+                            email: emailcont.text,
+                            password: passcont.text,
+                            uid: result.user.uid,
+                            username: namecont.text,
+                            balance: int.parse(balancecont.text),
+                          );
+                          print(result);
+                          if (result != null) {
+                            alertdialog("Sign Up Berhasil");
+                            Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                        LoginPage()),
+                                (route) => false);
+                          } else {
+                            print("gagal signup");
+                          }
+                        } catch (e) {
+                          alertdialog("Sign Up Gagal");
                         }
-                      } catch (e) {
-                        alertdialog("Sign Up Gagal");
-                      }
-                    })
+                      }),
+                )
               ],
             ),
           ),

@@ -1,21 +1,27 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
 
 import 'package:laporankeuangan/product.dart';
 
-class PageAddMemo extends StatefulWidget {
-  const PageAddMemo({
+class EditPage extends StatefulWidget {
+  final int i;
+  final AsyncSnapshot<QuerySnapshot> snapshot;
+  final String uid;
+  const EditPage({
+    this.i,
+    this.snapshot,
     Key key,
     this.uid,
   }) : super(key: key);
-  final String uid;
 
   @override
-  _PageAddMemoState createState() => _PageAddMemoState();
+  _EditPageMemoState createState() => _EditPageMemoState();
 }
 
-class _PageAddMemoState extends State<PageAddMemo> {
+class _EditPageMemoState extends State<EditPage> {
   void alertdialog(String error) {
     if (error.isEmpty) return;
 
@@ -67,7 +73,7 @@ class _PageAddMemoState extends State<PageAddMemo> {
         centerTitle: true,
         elevation: 20,
         backgroundColor: Colors.white38,
-        title: Text('Add Memo',
+        title: Text('Edit Memo',
             style: GoogleFonts.lato(
               fontWeight: FontWeight.w900,
             )),
@@ -75,16 +81,16 @@ class _PageAddMemoState extends State<PageAddMemo> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: HexColor('#c1f3f5'),
         onPressed: () async {
-          Product.addmemo(
-              uid: widget.uid,
-              jcash: jenis,
+          Product.editMemo(
+              i: widget.i,
               category: cat,
               image: image,
-              title: titlecont.text,
+              jcash: jenis,
+              snapshot: widget.snapshot,
               tanggalTransaksi: selectedDate,
+              title: titlecont.text,
               tanggalSimpan: DateTime.now(),
-              amount: int.parse(amountcont.text),
-              kodeUnik: DateTime.now().toString());
+              amount: int.parse(amountcont.text));
 
           var result = Product.processData(
               jenis, widget.uid, int.parse(amountcont.text));
@@ -201,17 +207,17 @@ class _PageAddMemoState extends State<PageAddMemo> {
                           FlatButton(
                             onPressed: () {
                               cat = 1;
-                              image = "lib/images/bowl.png";
+                              image = "lib/images/money-bag.png";
                             },
                             child: Container(
                               padding: EdgeInsets.all(5),
                               width: MediaQuery.of(context).size.width / 7,
                               height: MediaQuery.of(context).size.height / 14,
                               decoration: BoxDecoration(
-                                  color: HexColor("#80FFFFFF"),
+                                  color: Colors.amberAccent,
                                   borderRadius: BorderRadius.circular(10)),
                               child: Image(
-                                image: AssetImage('lib/images/bowl.png'),
+                                image: AssetImage('lib/images/money-bag.png'),
                                 height: MediaQuery.of(context).size.height / 10,
                               ),
                             ),
@@ -219,17 +225,17 @@ class _PageAddMemoState extends State<PageAddMemo> {
                           FlatButton(
                             onPressed: () {
                               cat = 2;
-                              image = "lib/images/scooter.png";
+                              image = "lib/images/calendar.png";
                             },
                             child: Container(
                               padding: EdgeInsets.all(5),
                               width: MediaQuery.of(context).size.width / 7,
                               height: MediaQuery.of(context).size.height / 14,
                               decoration: BoxDecoration(
-                                  color: HexColor("#80FFFFFF"),
+                                  color: Colors.amberAccent,
                                   borderRadius: BorderRadius.circular(10)),
                               child: Image(
-                                image: AssetImage('lib/images/scooter.png'),
+                                image: AssetImage('lib/images/calendar.png'),
                                 height: MediaQuery.of(context).size.height / 10,
                               ),
                             ),
@@ -237,17 +243,17 @@ class _PageAddMemoState extends State<PageAddMemo> {
                           FlatButton(
                             onPressed: () {
                               cat = 3;
-                              image = "lib/images/shop.png";
+                              image = "lib/images/user.png";
                             },
                             child: Container(
                               padding: EdgeInsets.all(5),
                               width: MediaQuery.of(context).size.width / 7,
                               height: MediaQuery.of(context).size.height / 14,
                               decoration: BoxDecoration(
-                                  color: HexColor("#80FFFFFF"),
+                                  color: Colors.amberAccent,
                                   borderRadius: BorderRadius.circular(10)),
                               child: Image(
-                                image: AssetImage('lib/images/shop.png'),
+                                image: AssetImage('lib/images/money-bag.png'),
                                 height: MediaQuery.of(context).size.height / 10,
                               ),
                             ),
@@ -255,17 +261,17 @@ class _PageAddMemoState extends State<PageAddMemo> {
                           FlatButton(
                             onPressed: () {
                               cat = 4;
-                              image = "lib/images/invoice.png";
+                              image = "lib/images/plus.png";
                             },
                             child: Container(
                               padding: EdgeInsets.all(5),
                               width: MediaQuery.of(context).size.width / 7,
                               height: MediaQuery.of(context).size.height / 14,
                               decoration: BoxDecoration(
-                                  color: HexColor("#80FFFFFF"),
+                                  color: Colors.amberAccent,
                                   borderRadius: BorderRadius.circular(10)),
                               child: Image(
-                                image: AssetImage('lib/images/invoice.png'),
+                                image: AssetImage('lib/images/money-bag.png'),
                                 height: MediaQuery.of(context).size.height / 10,
                               ),
                             ),
@@ -291,7 +297,7 @@ class _PageAddMemoState extends State<PageAddMemo> {
                               width: MediaQuery.of(context).size.width / 7,
                               height: MediaQuery.of(context).size.height / 14,
                               decoration: BoxDecoration(
-                                  color: HexColor("#80FFFFFF"),
+                                  color: Colors.amberAccent,
                                   borderRadius: BorderRadius.circular(10)),
                               child: Image(
                                 image: AssetImage('lib/images/money-bag.png'),
@@ -309,7 +315,7 @@ class _PageAddMemoState extends State<PageAddMemo> {
                               width: MediaQuery.of(context).size.width / 7,
                               height: MediaQuery.of(context).size.height / 14,
                               decoration: BoxDecoration(
-                                  color: HexColor("#80FFFFFF"),
+                                  color: Colors.amberAccent,
                                   borderRadius: BorderRadius.circular(10)),
                               child: Image(
                                 image: AssetImage('lib/images/money-bag.png'),
@@ -327,7 +333,7 @@ class _PageAddMemoState extends State<PageAddMemo> {
                               width: MediaQuery.of(context).size.width / 7,
                               height: MediaQuery.of(context).size.height / 14,
                               decoration: BoxDecoration(
-                                  color: HexColor("#80FFFFFF"),
+                                  color: Colors.amberAccent,
                                   borderRadius: BorderRadius.circular(10)),
                               child: Image(
                                 image: AssetImage('lib/images/money-bag.png'),
@@ -345,7 +351,7 @@ class _PageAddMemoState extends State<PageAddMemo> {
                               width: MediaQuery.of(context).size.width / 7,
                               height: MediaQuery.of(context).size.height / 14,
                               decoration: BoxDecoration(
-                                  color: HexColor("#80FFFFFF"),
+                                  color: Colors.amberAccent,
                                   borderRadius: BorderRadius.circular(10)),
                               child: Image(
                                 image: AssetImage('lib/images/money-bag.png'),

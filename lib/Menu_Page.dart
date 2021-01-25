@@ -2,14 +2,17 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:intl/intl.dart';
 import 'package:laporankeuangan/LoginPage.dart';
+import 'package:laporankeuangan/Widget/WidgetMemo.dart';
 
 import 'package:laporankeuangan/addmemo.dart';
 import 'package:laporankeuangan/auth_services.dart';
+import 'package:laporankeuangan/historyPage.dart';
 
-import 'package:laporankeuangan/memoBox.dart';
 import 'package:laporankeuangan/product.dart';
 import 'package:laporankeuangan/user.dart';
 
@@ -34,6 +37,7 @@ class _MenuPageState extends State<MenuPage> {
                   margin: EdgeInsets.only(top: 20),
                   height: MediaQuery.of(context).size.height,
                   width: MediaQuery.of(context).size.width,
+                  color: HexColor('#EBFAFF'),
                 ),
                 SingleChildScrollView(
                   child: Container(
@@ -44,7 +48,6 @@ class _MenuPageState extends State<MenuPage> {
                           height: 20,
                         ),
                         Text("Summary Category",
-                            textAlign: TextAlign.center,
                             style: GoogleFonts.lato(
                                 fontWeight: FontWeight.w800, fontSize: 25)),
                       ],
@@ -53,7 +56,7 @@ class _MenuPageState extends State<MenuPage> {
                 ),
                 menuAppBar(context),
                 StreamBuilder<QuerySnapshot>(
-                    stream: Product.getRealTimeData(widget.uidd),
+                    stream: Product.getSummaryData(1, widget.uidd),
                     builder: (context, snapshot) {
                       print("data memo");
                       if (snapshot.connectionState == ConnectionState.active) {
@@ -63,27 +66,34 @@ class _MenuPageState extends State<MenuPage> {
                           margin: EdgeInsets.only(
                               bottom: MediaQuery.of(context).size.height / 20,
                               top: MediaQuery.of(context).size.height / 1.7),
-                          child: ListView.builder(
-                              itemCount: snapshot.data.docs.length,
-                              itemBuilder: (context, i) {
-                                return Card(
-                                  child: ListTile(
-                                    subtitle: Text(
-                                        snapshot.data.docs[i]
-                                            .get('amount')
-                                            .toString(),
-                                        style: GoogleFonts.lato(
-                                            fontWeight: FontWeight.w800)),
-                                    trailing: Image(
-                                        image: AssetImage(snapshot.data.docs[i]
-                                            .get('category'))),
-                                    title: Text(
-                                        snapshot.data.docs[i].get('titlememo'),
-                                        style: GoogleFonts.lato(
-                                            fontWeight: FontWeight.w800)),
-                                  ),
-                                );
-                              }),
+                          child: Column(
+                            children: [
+                              SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    MemoWidget(
+                                      category: "Food",
+                                      image: "lib/images/bowl.png",
+                                      total: Product.sumDataAmount(snapshot),
+                                    ),
+                                    MemoWidget(
+                                      category: "Food",
+                                      image: "lib/images/bowl.png",
+                                      total: 20000,
+                                    ),
+                                    MemoWidget(
+                                      category: "Food",
+                                      image: "lib/images/bowl.png",
+                                      total: 20000,
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         );
                       } else {
                         return CircularProgressIndicator();
@@ -113,7 +123,28 @@ class _MenuPageState extends State<MenuPage> {
                                             )));
                               },
                               child: Image(
+                                width: MediaQuery.of(context).size.width / 200,
+                                height:
+                                    MediaQuery.of(context).size.height / 200,
                                 image: AssetImage("lib/images/plus.png"),
+                              )),
+                        ),
+                        Container(
+                          width: MediaQuery.of(context).size.width / 5,
+                          height: MediaQuery.of(context).size.height / 11,
+                          decoration: BoxDecoration(),
+                          child: GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            HistoryPage(
+                                              uid: widget.uidd,
+                                            )));
+                              },
+                              child: Image(
+                                image: AssetImage("lib/images/history.png"),
                               )),
                         ),
                       ],
@@ -134,7 +165,7 @@ class _MenuPageState extends State<MenuPage> {
             return Container(
               padding: EdgeInsets.only(top: 20, left: 30),
               height: MediaQuery.of(context).size.height / 8,
-              color: HexColor("#D9F1F9"),
+              color: HexColor("#50F0F8FF"),
               child: Row(
                 children: [
                   Container(
@@ -162,8 +193,11 @@ class _MenuPageState extends State<MenuPage> {
                   FlatButton(
                     onPressed: () {
                       AuthServices.signout();
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => LoginPage()));
+                      Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                              builder: (BuildContext context) => LoginPage()),
+                          (route) => false);
                     },
                     child: Container(
                       width: MediaQuery.of(context).size.width / 4,
@@ -179,7 +213,7 @@ class _MenuPageState extends State<MenuPage> {
               ),
             );
           } else {
-            return CircularProgressIndicator();
+            return Center(child: CircularProgressIndicator());
           }
         });
   }
@@ -190,38 +224,38 @@ class _MenuPageState extends State<MenuPage> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.active) {
             return Container(
-              margin: EdgeInsets.only(
-                  top: MediaQuery.of(context).size.height / 5,
-                  left: MediaQuery.of(context).size.width / 11.6),
-              padding:
-                  EdgeInsets.only(top: MediaQuery.of(context).size.height / 25),
+              padding: EdgeInsets.all(30),
+              margin: EdgeInsets.only(top: 100),
+              width: MediaQuery.of(context).size.width / 1,
               height: MediaQuery.of(context).size.height / 3,
-              width: MediaQuery.of(context).size.width / 1.2,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  color: HexColor("#FFF3B3")),
-              child: Column(
-                children: [
-                  Text(
-                    "Uang Kamu saat ini",
-                    style: fontallerta(18),
-                  ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height / 40,
-                  ),
-                  Text(snapshot.data.docs[0].get('balance').toString(),
-                      style: fontallerta(40)),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height / 50,
-                  ),
-                  Image(
-                      height: MediaQuery.of(context).size.height / 9,
-                      image: AssetImage('lib/images/bitcoin.png'))
-                ],
+              color: HexColor('#b5c6ce'),
+              child: Container(
+                height: MediaQuery.of(context).size.height / 8,
+                width: MediaQuery.of(context).size.width / 5,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: HexColor("#F5F4F3")),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Text(
+                      "Uang Kamu saat ini",
+                      style: GoogleFonts.lato(
+                          fontWeight: FontWeight.w900, fontSize: 15),
+                    ),
+                    Text(
+                        NumberFormat.currency(
+                                locale: 'id', symbol: 'Rp ', decimalDigits: 0)
+                            .format(snapshot.data.docs[0].get('balance'))
+                            .toString(),
+                        style: GoogleFonts.lato(
+                            fontWeight: FontWeight.w900, fontSize: 35)),
+                  ],
+                ),
               ),
             );
           } else {
-            return CircularProgressIndicator();
+            return Center(child: CircularProgressIndicator());
           }
         });
   }

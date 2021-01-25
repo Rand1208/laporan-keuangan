@@ -35,6 +35,14 @@ class Userss {
     });
   }
 
+  static Future<void> resetBalance(String uid) {
+    return users
+        .doc(uid)
+        .update({'balance': 0})
+        .then((value) => print("reset balance berhasil"))
+        .catchError((error) => print('reset balance gagal'));
+  }
+
   static Stream<QuerySnapshot> getRealTimeData(String uid) async* {
     QuerySnapshot data =
         await FirebaseFirestore.instance.collection('users').get();

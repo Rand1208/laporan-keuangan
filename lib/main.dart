@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+
 import 'package:laporankeuangan/LoginPage.dart';
 
 void main() {
@@ -18,6 +19,7 @@ class MyApp extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.done) {
           print("Berhasil Masuk gan");
           return MaterialApp(
+            theme: ThemeData(),
             home: LoginPage(),
           );
         }
