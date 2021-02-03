@@ -25,6 +25,7 @@ class Product {
       String title,
       DateTime tanggalTransaksi,
       DateTime tanggalSimpan,
+      int pembayaran,
       String kodeUnik,
       int amount}) async {
     return memo
@@ -39,6 +40,7 @@ class Product {
           'tanggalsimpan': tanggalSimpan,
           'amount': amount,
           'kodeunik': kodeUnik,
+          'pembayaran': pembayaran,
         })
         .then((value) => print("memoooooooooooo addedd"))
         .catchError((error) => print("gagal input memo"));
@@ -71,27 +73,48 @@ class Product {
   }
 
   static Stream<QuerySnapshot> getRealTimeData(String uid) async* {
-    QuerySnapshot data =
-        await FirebaseFirestore.instance.collection('memo').get();
-
-    if (data.docs.isEmpty) {
-      print("Docs masih Kosong");
-    } else {
+    try {
       Query query = FirebaseFirestore.instance
           .collection("memo")
           .where("uid", isEqualTo: uid);
+      print("query getRealTimedata berhasil");
 
       yield* query.snapshots(includeMetadataChanges: true);
+    } catch (e) {
+      print("gagal mendapatkan getrealtime data product");
+    }
+  }
+
+  static CollectionReference getRealTimeDataAll() {
+    CollectionReference data = FirebaseFirestore.instance.collection('memo');
+    return data;
+  }
+
+  getSummaryDataPengeluaranPemasukan(int jpemb, String uid) async* {
+    try {
+      var data = await FirebaseFirestore.instance
+          .collection('memo')
+          .where('uid', isEqualTo: uid)
+          .where('jcash', isEqualTo: jpemb);
+      var snapshot = data.snapshots();
+
+      yield* data.snapshots();
+    } catch (e) {
+      print('gagal mendapatkan data pengeluaran atau pemasukan');
     }
   }
 
   static Stream<QuerySnapshot> getSummaryData(int category, String uid) async* {
-    var data = await FirebaseFirestore.instance
-        .collection('memo')
-        .where('uid', isEqualTo: uid)
-        .where('category', isEqualTo: category);
-    print(data);
-    yield* data.snapshots(includeMetadataChanges: true);
+    try {
+      var data = FirebaseFirestore.instance
+          .collection('memo')
+          .where('uid', isEqualTo: uid)
+          .where('category', isEqualTo: category);
+      print(data);
+      yield* data.snapshots(includeMetadataChanges: true);
+    } catch (e) {
+      print("gagal mendapatkan getsummary data");
+    }
   }
 
   static sumDataAmount(AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -102,6 +125,20 @@ class Product {
     print(temp);
 
     return temp;
+  }
+
+  static Stream<QuerySnapshot> getSummaryDataPembayaran(
+      int pembayaran, String uid) async* {
+    try {
+      var data = FirebaseFirestore.instance
+          .collection("memo")
+          .where("uid", isEqualTo: uid)
+          .where("pembayaran", isEqualTo: pembayaran);
+
+      yield* data.snapshots();
+    } catch (e) {
+      print("gagal dapat summary pembayaran");
+    }
   }
 
   static Future<void> deleteMemo(AsyncSnapshot<QuerySnapshot> snapshot, int i) {
@@ -116,6 +153,7 @@ class Product {
   static Future<void> editMemo(
       {AsyncSnapshot<QuerySnapshot> snapshot,
       int i,
+      int pembayaran,
       int jcash,
       int category,
       String image,
@@ -134,6 +172,7 @@ class Product {
           'tanggaltransaksi': tanggalTransaksi,
           'tanggalsimpan': tanggalSimpan,
           'amount': amount,
+          'pembayaran': pembayaran,
         })
         .then((value) => print("Update berhasil"))
         .catchError((error) => print("Update gagal $error"));

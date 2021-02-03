@@ -3,8 +3,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:intl/intl.dart';
 
 import 'package:laporankeuangan/product.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'Widget/widgetIcon.dart';
 
 class EditPage extends StatefulWidget {
   final int i;
@@ -22,6 +26,7 @@ class EditPage extends StatefulWidget {
 }
 
 class _EditPageMemoState extends State<EditPage> {
+  int pemb;
   void alertdialog(String error) {
     if (error.isEmpty) return;
 
@@ -61,6 +66,15 @@ class _EditPageMemoState extends State<EditPage> {
     return selectedDate = picked;
   }
 
+  panggil() async {
+    SharedPreferences temp = await SharedPreferences.getInstance();
+    int pembe = temp.getInt('key');
+
+    print("hasil Sharedpreferences $pembe");
+
+    return pembe;
+  }
+
   void dispose() {
     titlecont.dispose();
     super.dispose();
@@ -81,16 +95,19 @@ class _EditPageMemoState extends State<EditPage> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: HexColor('#c1f3f5'),
         onPressed: () async {
+          int a = await panggil();
           Product.editMemo(
-              i: widget.i,
-              category: cat,
-              image: image,
-              jcash: jenis,
-              snapshot: widget.snapshot,
-              tanggalTransaksi: selectedDate,
-              title: titlecont.text,
-              tanggalSimpan: DateTime.now(),
-              amount: int.parse(amountcont.text));
+            i: widget.i,
+            category: cat,
+            image: image,
+            jcash: jenis,
+            snapshot: widget.snapshot,
+            tanggalTransaksi: selectedDate,
+            title: titlecont.text,
+            tanggalSimpan: DateTime.now(),
+            amount: int.parse(amountcont.text),
+            pembayaran: a,
+          );
 
           var result = Product.processData(
               jenis, widget.uid, int.parse(amountcont.text));
@@ -101,14 +118,14 @@ class _EditPageMemoState extends State<EditPage> {
         child: Icon(Icons.add),
       ),
       body: Container(
-        color: HexColor('#c1f3f5'),
+        height: MediaQuery.of(context).size.height / 1,
+        padding: EdgeInsets.only(left: 20, right: 20),
+        color: HexColor('#FADCD9'),
         child: SingleChildScrollView(
           child: Column(
             children: [
               Container(
                 height: MediaQuery.of(context).size.height / 12,
-                margin: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.height / 20),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -173,14 +190,53 @@ class _EditPageMemoState extends State<EditPage> {
                   ],
                 ),
               ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Pembayaran",
+                      style: GoogleFonts.lato(
+                          fontSize: 15, fontWeight: FontWeight.w900)),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        WidgetIconAdd(
+                          pembayaran: 1,
+                          imagee: "cash.png",
+                        ),
+                        WidgetIconAdd(
+                          pembayaran: 2,
+                          imagee: 'Dana.png',
+                        ),
+                        WidgetIconAdd(
+                          pembayaran: 3,
+                          imagee: "ovo.png",
+                        ),
+                        WidgetIconAdd(
+                          pembayaran: 4,
+                          imagee: "shopee.png",
+                        ),
+                        WidgetIconAdd(
+                          pembayaran: 5,
+                          imagee: "gopay.png",
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+              SizedBox(
+                height: 10,
+              ),
               SizedBox(
                 height: MediaQuery.of(context).size.height / 20,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Container(
-                      margin: EdgeInsets.only(
-                          left: MediaQuery.of(context).size.width / 7),
                       child: Text(
                         "Category",
                         style: GoogleFonts.lato(
@@ -192,10 +248,6 @@ class _EditPageMemoState extends State<EditPage> {
                 ),
               ),
               Container(
-                padding: EdgeInsets.only(
-                    left: MediaQuery.of(context).size.width / 7,
-                    right: MediaQuery.of(context).size.width / 5,
-                    top: MediaQuery.of(context).size.height / 50),
                 height: MediaQuery.of(context).size.height / 4,
                 child: Column(
                   children: [
@@ -207,17 +259,17 @@ class _EditPageMemoState extends State<EditPage> {
                           FlatButton(
                             onPressed: () {
                               cat = 1;
-                              image = "lib/images/money-bag.png";
+                              image = "lib/images/bowl.png";
                             },
                             child: Container(
                               padding: EdgeInsets.all(5),
                               width: MediaQuery.of(context).size.width / 7,
                               height: MediaQuery.of(context).size.height / 14,
                               decoration: BoxDecoration(
-                                  color: Colors.amberAccent,
+                                  color: HexColor("#80FFFFFF"),
                                   borderRadius: BorderRadius.circular(10)),
                               child: Image(
-                                image: AssetImage('lib/images/money-bag.png'),
+                                image: AssetImage('lib/images/bowl.png'),
                                 height: MediaQuery.of(context).size.height / 10,
                               ),
                             ),
@@ -225,17 +277,17 @@ class _EditPageMemoState extends State<EditPage> {
                           FlatButton(
                             onPressed: () {
                               cat = 2;
-                              image = "lib/images/calendar.png";
+                              image = "lib/images/scooter.png";
                             },
                             child: Container(
                               padding: EdgeInsets.all(5),
                               width: MediaQuery.of(context).size.width / 7,
                               height: MediaQuery.of(context).size.height / 14,
                               decoration: BoxDecoration(
-                                  color: Colors.amberAccent,
+                                  color: HexColor("#80FFFFFF"),
                                   borderRadius: BorderRadius.circular(10)),
                               child: Image(
-                                image: AssetImage('lib/images/calendar.png'),
+                                image: AssetImage('lib/images/scooter.png'),
                                 height: MediaQuery.of(context).size.height / 10,
                               ),
                             ),
@@ -243,17 +295,17 @@ class _EditPageMemoState extends State<EditPage> {
                           FlatButton(
                             onPressed: () {
                               cat = 3;
-                              image = "lib/images/user.png";
+                              image = "lib/images/shop.png";
                             },
                             child: Container(
                               padding: EdgeInsets.all(5),
                               width: MediaQuery.of(context).size.width / 7,
                               height: MediaQuery.of(context).size.height / 14,
                               decoration: BoxDecoration(
-                                  color: Colors.amberAccent,
+                                  color: HexColor("#80FFFFFF"),
                                   borderRadius: BorderRadius.circular(10)),
                               child: Image(
-                                image: AssetImage('lib/images/money-bag.png'),
+                                image: AssetImage('lib/images/shop.png'),
                                 height: MediaQuery.of(context).size.height / 10,
                               ),
                             ),
@@ -261,17 +313,17 @@ class _EditPageMemoState extends State<EditPage> {
                           FlatButton(
                             onPressed: () {
                               cat = 4;
-                              image = "lib/images/plus.png";
+                              image = "lib/images/invoice.png";
                             },
                             child: Container(
                               padding: EdgeInsets.all(5),
                               width: MediaQuery.of(context).size.width / 7,
                               height: MediaQuery.of(context).size.height / 14,
                               decoration: BoxDecoration(
-                                  color: Colors.amberAccent,
+                                  color: HexColor("#80FFFFFF"),
                                   borderRadius: BorderRadius.circular(10)),
                               child: Image(
-                                image: AssetImage('lib/images/money-bag.png'),
+                                image: AssetImage('lib/images/invoice.png'),
                                 height: MediaQuery.of(context).size.height / 10,
                               ),
                             ),
@@ -297,7 +349,7 @@ class _EditPageMemoState extends State<EditPage> {
                               width: MediaQuery.of(context).size.width / 7,
                               height: MediaQuery.of(context).size.height / 14,
                               decoration: BoxDecoration(
-                                  color: Colors.amberAccent,
+                                  color: HexColor("#80FFFFFF"),
                                   borderRadius: BorderRadius.circular(10)),
                               child: Image(
                                 image: AssetImage('lib/images/money-bag.png'),
@@ -315,7 +367,7 @@ class _EditPageMemoState extends State<EditPage> {
                               width: MediaQuery.of(context).size.width / 7,
                               height: MediaQuery.of(context).size.height / 14,
                               decoration: BoxDecoration(
-                                  color: Colors.amberAccent,
+                                  color: HexColor("#80FFFFFF"),
                                   borderRadius: BorderRadius.circular(10)),
                               child: Image(
                                 image: AssetImage('lib/images/money-bag.png'),
@@ -333,7 +385,7 @@ class _EditPageMemoState extends State<EditPage> {
                               width: MediaQuery.of(context).size.width / 7,
                               height: MediaQuery.of(context).size.height / 14,
                               decoration: BoxDecoration(
-                                  color: Colors.amberAccent,
+                                  color: HexColor("#80FFFFFF"),
                                   borderRadius: BorderRadius.circular(10)),
                               child: Image(
                                 image: AssetImage('lib/images/money-bag.png'),
@@ -351,7 +403,7 @@ class _EditPageMemoState extends State<EditPage> {
                               width: MediaQuery.of(context).size.width / 7,
                               height: MediaQuery.of(context).size.height / 14,
                               decoration: BoxDecoration(
-                                  color: Colors.amberAccent,
+                                  color: HexColor("#80FFFFFF"),
                                   borderRadius: BorderRadius.circular(10)),
                               child: Image(
                                 image: AssetImage('lib/images/money-bag.png'),
@@ -366,8 +418,33 @@ class _EditPageMemoState extends State<EditPage> {
                 ),
               ),
               Container(
-                height: MediaQuery.of(context).size.height / 10,
-                width: MediaQuery.of(context).size.width / 1.4,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  children: [
+                    Text(
+                      DateFormat.yMMMd().format(selectedDate),
+                      style: GoogleFonts.lato(
+                          fontSize: 30, fontWeight: FontWeight.w900),
+                    ),
+                    FlatButton(
+                        onPressed: () async {
+                          selectedDate = await _selectDate(context);
+                          if (selectedDate != null) {
+                            print("tanggal masuk");
+                            print(selectedDate.toString());
+                            setState(() {});
+                          } else {
+                            selectedDate = DateTime.now();
+                            setState(() {});
+                          }
+                        },
+                        child: Icon(Icons.date_range))
+                  ],
+                ),
+              ),
+              Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
                 ),
@@ -386,57 +463,18 @@ class _EditPageMemoState extends State<EditPage> {
                 ),
               ),
               SizedBox(
-                height: 30,
+                height: 15,
               ),
               Container(
-                height: MediaQuery.of(context).size.height / 10,
-                width: MediaQuery.of(context).size.width / 1.4,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        style: GoogleFonts.lato(fontWeight: FontWeight.w800),
-                        controller: datecont,
-                        decoration: InputDecoration(
-                          hintText: selectedDate.toString(),
-                          prefixIcon: Icon(
-                            Icons.date_range,
-                          ),
-                          labelText: "Tanggal",
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(20),
-                              borderSide: BorderSide(color: Colors.black12)),
-                        ),
-                      ),
-                    ),
-                    FlatButton(
-                        onPressed: () async {
-                          DateTime selectedDatee = await _selectDate(context);
-                          print("tanggal masuk");
-                          print(selectedDatee.toString());
-                        },
-                        child: Icon(Icons.date_range))
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 30,
-              ),
-              Container(
-                height: MediaQuery.of(context).size.height / 10,
-                width: MediaQuery.of(context).size.width / 1.4,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(
                       child: Container(
                         child: TextField(
+                          keyboardType: TextInputType.number,
                           style: GoogleFonts.lato(fontWeight: FontWeight.w800),
                           controller: amountcont,
                           decoration: InputDecoration(

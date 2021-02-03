@@ -31,7 +31,6 @@ dependencies:
   firebase_storage: ^5.2.0
   flutter_bloc: ^6.1.1
   flutter_datetime_picker: ^1.4.0
-  
   flutter_svg: ^0.19.1
   google_fonts: ^1.1.1
   hexcolor: ^1.0.6

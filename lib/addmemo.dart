@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:intl/intl.dart';
+import 'package:laporankeuangan/Widget/widgetIcon.dart';
 
 import 'package:laporankeuangan/product.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PageAddMemo extends StatefulWidget {
   const PageAddMemo({
@@ -33,6 +37,15 @@ class _PageAddMemoState extends State<PageAddMemo> {
     showDialog(context: context, child: alertDialog);
   }
 
+  panggil() async {
+    SharedPreferences temp = await SharedPreferences.getInstance();
+    int pembe = temp.getInt('key');
+
+    print("hasil Sharedpreferences $pembe");
+
+    return pembe;
+  }
+
   var titlecont = TextEditingController();
   var datecont = TextEditingController();
   var amountcont = TextEditingController();
@@ -43,6 +56,7 @@ class _PageAddMemoState extends State<PageAddMemo> {
   Color colorb = Colors.amber;
   String image = "";
   int cat = 1;
+  int pembayaran = 1;
 
   Future<DateTime> _selectDate(BuildContext context) async {
     final DateTime picked = await showDatePicker(
@@ -57,6 +71,8 @@ class _PageAddMemoState extends State<PageAddMemo> {
 
   void dispose() {
     titlecont.dispose();
+    datecont.dispose();
+    amountcont.dispose();
     super.dispose();
   }
 
@@ -73,8 +89,9 @@ class _PageAddMemoState extends State<PageAddMemo> {
             )),
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: HexColor('#c1f3f5'),
+        backgroundColor: Colors.amber,
         onPressed: () async {
+          int a = await panggil();
           Product.addmemo(
               uid: widget.uid,
               jcash: jenis,
@@ -84,6 +101,7 @@ class _PageAddMemoState extends State<PageAddMemo> {
               tanggalTransaksi: selectedDate,
               tanggalSimpan: DateTime.now(),
               amount: int.parse(amountcont.text),
+              pembayaran: a,
               kodeUnik: DateTime.now().toString());
 
           var result = Product.processData(
@@ -95,14 +113,16 @@ class _PageAddMemoState extends State<PageAddMemo> {
         child: Icon(Icons.add),
       ),
       body: Container(
-        color: HexColor('#c1f3f5'),
+        height: MediaQuery.of(context).size.height / 1,
+        padding: EdgeInsets.only(left: 20, right: 20),
+        color: HexColor('#FADCD9'),
         child: SingleChildScrollView(
           child: Column(
             children: [
               Container(
-                height: MediaQuery.of(context).size.height / 12,
                 margin: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.height / 20),
+                    top: MediaQuery.of(context).size.height / 40),
+                height: MediaQuery.of(context).size.height / 12,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -168,13 +188,55 @@ class _PageAddMemoState extends State<PageAddMemo> {
                 ),
               ),
               SizedBox(
+                height: MediaQuery.of(context).size.height / 50,
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Pembayaran",
+                      style: GoogleFonts.lato(
+                          fontSize: 15, fontWeight: FontWeight.w900)),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height / 50,
+                  ),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        WidgetIconAdd(
+                          pembayaran: 1,
+                          imagee: "cash.png",
+                        ),
+                        WidgetIconAdd(
+                          pembayaran: 2,
+                          imagee: 'Dana.png',
+                        ),
+                        WidgetIconAdd(
+                          pembayaran: 3,
+                          imagee: "ovo.png",
+                        ),
+                        WidgetIconAdd(
+                          pembayaran: 4,
+                          imagee: "shopee.png",
+                        ),
+                        WidgetIconAdd(
+                          pembayaran: 5,
+                          imagee: "gopay.png",
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height / 50,
+              ),
+              SizedBox(
                 height: MediaQuery.of(context).size.height / 20,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Container(
-                      margin: EdgeInsets.only(
-                          left: MediaQuery.of(context).size.width / 7),
                       child: Text(
                         "Category",
                         style: GoogleFonts.lato(
@@ -185,11 +247,10 @@ class _PageAddMemoState extends State<PageAddMemo> {
                   ],
                 ),
               ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height / 50,
+              ),
               Container(
-                padding: EdgeInsets.only(
-                    left: MediaQuery.of(context).size.width / 7,
-                    right: MediaQuery.of(context).size.width / 5,
-                    top: MediaQuery.of(context).size.height / 50),
                 height: MediaQuery.of(context).size.height / 4,
                 child: Column(
                   children: [
@@ -360,8 +421,33 @@ class _PageAddMemoState extends State<PageAddMemo> {
                 ),
               ),
               Container(
-                height: MediaQuery.of(context).size.height / 10,
-                width: MediaQuery.of(context).size.width / 1.4,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  children: [
+                    Text(
+                      DateFormat.yMMMd().format(selectedDate),
+                      style: GoogleFonts.lato(
+                          fontSize: 30, fontWeight: FontWeight.w900),
+                    ),
+                    FlatButton(
+                        onPressed: () async {
+                          selectedDate = await _selectDate(context);
+                          if (selectedDate != null) {
+                            print("tanggal masuk");
+                            print(selectedDate.toString());
+                            setState(() {});
+                          } else {
+                            selectedDate = DateTime.now();
+                            setState(() {});
+                          }
+                        },
+                        child: Icon(Icons.date_range))
+                  ],
+                ),
+              ),
+              Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
                 ),
@@ -380,57 +466,18 @@ class _PageAddMemoState extends State<PageAddMemo> {
                 ),
               ),
               SizedBox(
-                height: 30,
+                height: 15,
               ),
               Container(
-                height: MediaQuery.of(context).size.height / 10,
-                width: MediaQuery.of(context).size.width / 1.4,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        style: GoogleFonts.lato(fontWeight: FontWeight.w800),
-                        controller: datecont,
-                        decoration: InputDecoration(
-                          hintText: selectedDate.toString(),
-                          prefixIcon: Icon(
-                            Icons.date_range,
-                          ),
-                          labelText: "Tanggal",
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(20),
-                              borderSide: BorderSide(color: Colors.black12)),
-                        ),
-                      ),
-                    ),
-                    FlatButton(
-                        onPressed: () async {
-                          DateTime selectedDatee = await _selectDate(context);
-                          print("tanggal masuk");
-                          print(selectedDatee.toString());
-                        },
-                        child: Icon(Icons.date_range))
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 30,
-              ),
-              Container(
-                height: MediaQuery.of(context).size.height / 10,
-                width: MediaQuery.of(context).size.width / 1.4,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(
                       child: Container(
                         child: TextField(
+                          keyboardType: TextInputType.number,
                           style: GoogleFonts.lato(fontWeight: FontWeight.w800),
                           controller: amountcont,
                           decoration: InputDecoration(

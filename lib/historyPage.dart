@@ -31,75 +31,72 @@ class _HistoryPageState extends State<HistoryPage> {
       body: Container(
         width: MediaQuery.of(context).size.width / 1,
         height: MediaQuery.of(context).size.height / 1,
-        color: HexColor("#D9F1F9"),
+        color: HexColor("#FADCD9"),
         child: StreamBuilder<QuerySnapshot>(
             stream: Product.getRealTimeData(widget.uid),
             builder: (context, snapshot) {
               print("data memo");
-              if (snapshot.connectionState == ConnectionState.active) {
+              if (snapshot.data == null)
                 return Container(
-                  padding: EdgeInsets.all(50),
-                  child: ListView.builder(
-                      itemCount: snapshot.data.docs.length,
-                      itemBuilder: (context, i) {
-                        return Dismissible(
-                          key: Key(snapshot.data.docs[i].get('kodeunik')),
-                          onDismissed: (direction) {
-                            Product.deleteMemo(snapshot, i);
+                  height: MediaQuery.of(context).size.height / 1,
+                  width: MediaQuery.of(context).size.width / 1,
+                  child: Center(child: Text("data belum ada")),
+                );
+              return Container(
+                padding: EdgeInsets.all(10),
+                child: ListView.builder(
+                    itemCount: snapshot.data.docs.length,
+                    itemBuilder: (context, i) {
+                      return Dismissible(
+                        key: Key(snapshot.data.docs[i].get('kodeunik')),
+                        onDismissed: (direction) {
+                          Product.deleteMemo(snapshot, i);
+                        },
+                        child: GestureDetector(
+                          onTap: () {
+                            print(i);
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (BuildContext context) => EditPage(
+                                          snapshot: snapshot,
+                                          uid: widget.uid,
+                                          i: i,
+                                        )));
                           },
-                          child: GestureDetector(
-                            onTap: () {
-                              print(i);
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (BuildContext context) =>
-                                          EditPage(
-                                            snapshot: snapshot,
-                                            uid: widget.uid,
-                                            i: i,
-                                          )));
-                            },
-                            child: Card(
-                              child: ListTile(
-                                leading: Image(
-                                    image: AssetImage(
-                                        snapshot.data.docs[i].get('image'))),
-                                subtitle: Text(
-                                    NumberFormat.currency(
-                                            locale: 'id',
-                                            symbol: 'Rp ',
-                                            decimalDigits: 0)
-                                        .format(
-                                            snapshot.data.docs[i].get('amount'))
-                                        .toString(),
-                                    style: GoogleFonts.lato(
-                                        fontWeight: FontWeight.w800)),
-                                trailing: Text(
-                                    DateFormat.yMMMd()
-                                        .format(snapshot.data.docs[i]
-                                            .get('tanggaltransaksi')
-                                            .toDate())
-                                        .toString(),
-                                    style: GoogleFonts.lato(
-                                        fontWeight: FontWeight.w800)),
-                                title: Text(
-                                    snapshot.data.docs[i].get('titlememo'),
-                                    style: GoogleFonts.lato(
-                                        fontWeight: FontWeight.w800)),
-                              ),
+                          child: Card(
+                            child: ListTile(
+                              leading: Image(
+                                  image: AssetImage(
+                                      snapshot.data.docs[i].get('image'))),
+                              subtitle: Text(
+                                  NumberFormat.currency(
+                                          locale: 'id',
+                                          symbol: 'Rp ',
+                                          decimalDigits: 0)
+                                      .format(
+                                          snapshot.data.docs[i].get('amount'))
+                                      .toString(),
+                                  style: GoogleFonts.lato(
+                                      fontWeight: FontWeight.w800)),
+                              trailing: Text(
+                                  DateFormat.yMMMd()
+                                      .format(snapshot.data.docs[i]
+                                          .get('tanggaltransaksi')
+                                          .toDate())
+                                      .toString(),
+                                  style: GoogleFonts.lato(
+                                      fontWeight: FontWeight.w800)),
+                              title: Text(
+                                  snapshot.data.docs[i].get('titlememo'),
+                                  style: GoogleFonts.lato(
+                                      fontWeight: FontWeight.w800)),
                             ),
                           ),
-                        );
-                      }),
-                );
-              } else if (snapshot.connectionState == ConnectionState.none) {
-                print("data tidak ada");
-                return Center(child: CircularProgressIndicator());
-              } else {
-                print('connection else');
-                return Center(child: CircularProgressIndicator());
-              }
+                        ),
+                      );
+                    }),
+              );
             }),
       ),
     );

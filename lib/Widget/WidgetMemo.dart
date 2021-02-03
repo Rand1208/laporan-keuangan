@@ -4,8 +4,8 @@ import 'package:hexcolor/hexcolor.dart';
 import 'package:intl/intl.dart';
 
 class MemoWidget extends StatefulWidget {
-  String image;
-  String category;
+  final String image;
+  final String category;
   int total;
   MemoWidget({Key key, this.image, this.category, this.total})
       : super(key: key);

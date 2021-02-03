@@ -44,18 +44,13 @@ class Userss {
   }
 
   static Stream<QuerySnapshot> getRealTimeData(String uid) async* {
-    QuerySnapshot data =
-        await FirebaseFirestore.instance.collection('users').get();
 
-    if (data.docs.isEmpty) {
-      print("Docs masih Kosong");
-    } else {
-      Query query = FirebaseFirestore.instance
-          .collection("users")
-          .where("uid", isEqualTo: uid);
 
-      yield* query.snapshots(includeMetadataChanges: true);
-    }
+    Query query = FirebaseFirestore.instance
+        .collection("users")
+        .where("uid", isEqualTo: uid);
+
+    yield* query.snapshots(includeMetadataChanges: true);
   }
 
   static Future<DocumentSnapshot> getData(String uid) {
