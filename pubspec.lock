@@ -14,7 +14,14 @@ packages:
       name: bloc
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "6.1.0"
+    version: "6.1.1"
+  bloc_provider:
+    dependency: "direct main"
+    description:
+      name: bloc_provider
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.7.0+3"
   boolean_selector:
     dependency: transitive
     description:
@@ -92,6 +99,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.1.3"
+  equatable:
+    dependency: "direct main"
+    description:
+      name: equatable
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.2.6"
   fake_async:
     dependency: transitive
     description:
@@ -367,12 +381,12 @@ packages:
     source: hosted
     version: "3.0.13"
   provider:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: provider
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.3.2+2"
+    version: "4.3.3"
   quiver:
     dependency: transitive
     description:

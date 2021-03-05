@@ -59,6 +59,9 @@ class Product {
 
     int uangSekarang = balance.docs[0].get('balance');
 
+    var snapshot = getSummaryDataPengeluaranPemasukan(1, uid);
+    print(snapshot);
+
     if (jenispengeluaran == 1) {
       uangSekarang = uangSekarang - amount;
       print(uangSekarang.toString());
@@ -90,15 +93,12 @@ class Product {
     return data;
   }
 
-  getSummaryDataPengeluaranPemasukan(int jpemb, String uid) async* {
+  static getSummaryDataPengeluaranPemasukan(int jpemb, String uid) {
     try {
-      var data = await FirebaseFirestore.instance
+      var data = FirebaseFirestore.instance
           .collection('memo')
           .where('uid', isEqualTo: uid)
           .where('jcash', isEqualTo: jpemb);
-      var snapshot = data.snapshots();
-
-      yield* data.snapshots();
     } catch (e) {
       print('gagal mendapatkan data pengeluaran atau pemasukan');
     }
@@ -141,8 +141,27 @@ class Product {
     }
   }
 
-  static Future<void> deleteMemo(AsyncSnapshot<QuerySnapshot> snapshot, int i) {
+  static Future<void> deleteMemo(
+      AsyncSnapshot<QuerySnapshot> snapshot, int i) async {
+    String tempUid = snapshot.data.docs[i].get('uid');
+    CollectionReference tempb = FirebaseFirestore.instance.collection('users');
+
+    QuerySnapshot balance = await tempb.where("uid", isEqualTo: tempUid).get();
     String temp = snapshot.data.docs[i].get('kodeunik');
+    int tempjenisPengeluaran = snapshot.data.docs[i].get('pembayaran');
+    int tempUangDiapus = snapshot.data.docs[i].get('amount');
+    int uangSekarang = balance.docs[0].get('balance');
+
+    if (tempjenisPengeluaran == 1) {
+      int balanceNow = uangSekarang + tempUangDiapus;
+      tempb.doc(tempUid).update({'balance': balanceNow}).then(
+          (value) => print("berhasil update data balance hapus memo"));
+    } else {
+      int balanceNow = uangSekarang - tempUangDiapus;
+      tempb.doc(tempUid).update({'balance': balanceNow}).then(
+          (value) => print("berhasil update data balance hapus memo"));
+    }
+
     return memo
         .doc(temp)
         .delete()

@@ -42,7 +42,7 @@ class _MenuPageState extends State<MenuPage> {
               margin: EdgeInsets.only(top: 20),
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
-              color: HexColor('#FADCD9'),
+              color: HexColor("#EBFAFF"),
             ),
             SingleChildScrollView(
               scrollDirection: Axis.vertical,
@@ -222,7 +222,7 @@ class _MenuPageState extends State<MenuPage> {
             print("UID dari user " + widget.uidd);
             if (snapshot.data == null) return CircularProgressIndicator();
             return Container(
-              color: Colors.amber,
+              color: HexColor("#EBF0FF"),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -277,10 +277,10 @@ class _MenuPageState extends State<MenuPage> {
           builder: (context, snapshot) {
             if (snapshot.data == null) return CircularProgressIndicator();
             return Container(
-              padding: EdgeInsets.all(30),
+              padding: EdgeInsets.all(MediaQuery.of(context).size.width / 50),
               width: MediaQuery.of(context).size.width / 1,
               height: MediaQuery.of(context).size.height / 6,
-              color: HexColor('#F8AFA6'),
+              color: HexColor('#EBFAFF'),
               child: Container(
                 height: MediaQuery.of(context).size.height / 20,
                 width: MediaQuery.of(context).size.width / 5,
